@@ -48,7 +48,7 @@
                   if [ ! -f "$KEY_FILE" ]; then
                     echo "✗ $KEY_FILE not found."
                     echo "  Create it with a single line: CF_API_KEY=your_curseforge_key"
-                    mkdir $HOME/mc-servers
+                    mkdir "$HOME/mc-servers"
                     exit 1
                   fi
 
