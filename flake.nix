@@ -117,6 +117,11 @@
             pkgs.docker-compose-language-service # docker compose schema & completions
             pkgs.yaml-language-server # general YAML (set schema in editor)
           ];
+          shellHook = ''
+            if [ -z "$FISH_VERSION" ]; then
+              exec fish
+            fi
+          '';
         };
 
         # nix run .#aero / nix run .#souls / etc — one per yaml, auto-discovered
