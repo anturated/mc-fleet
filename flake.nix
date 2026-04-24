@@ -48,6 +48,7 @@
                   if [ ! -f "$KEY_FILE" ]; then
                     echo "✗ $KEY_FILE not found."
                     echo "  Create it with a single line: CF_API_KEY=your_curseforge_key"
+                    mkdir $HOME/mc-servers
                     exit 1
                   fi
 
@@ -76,11 +77,21 @@
                   # grep -E should skip commented lines (leading #, ignoring whitespace)
                   if grep -qE '^[[:space:]]*CF_MODPACK_ZIP:' "$DEST/compose.yaml"; then
                     mkdir -p "$DEST/pack"
+                    SLUG=$(grep -E '^[[:space:]]*CF_SLUG:' "$DEST/compose.yaml" \
+                      | head -1 \
+                      | sed 's/.*CF_SLUG:[[:space:]]*//' \
+                      | tr -d '"'"'"' ')
                     echo ""
                     echo "┌─────────────────────────────────────────────────────┐"
                     echo "│  This server needs a modpack zip.                   │"
-                    echo "│  PUT THE ZIP INTO: $DEST/pack/"
-                    echo "│  Then press ENTER to continue.                      │"
+                    echo "│                                                     │"
+                    echo "│  GO HERE:                                           │"
+                    echo "│  https://www.curseforge.com/minecraft/modpacks/$SLUG"
+                    echo "│                                                     │"
+                    echo "│  MANUALLY DOWNLOAD THE ZIP, then put it in:        │"
+                    echo "│  $DEST/pack/                                        │"
+                    echo "│                                                     │"
+                    echo "│  Press ENTER when the zip is in place.             │"
                     echo "└─────────────────────────────────────────────────────┘"
                     read -r
                   fi
@@ -100,7 +111,9 @@
       in
       {
         devShells.default = pkgs.mkShell {
+          name = "MC Fleet";
           packages = [
+            pkgs.fish
             pkgs.docker-compose-language-service # docker compose schema & completions
             pkgs.yaml-language-server # general YAML (set schema in editor)
           ];
