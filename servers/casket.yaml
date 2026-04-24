@@ -7,7 +7,7 @@ services:
     ports:
       - "25565:25565"
 
-    env-file:
+    env_file:
       - .env
     environment:
       EULA: "TRUE"
@@ -16,11 +16,10 @@ services:
 
       # CF_MODPACK_ZIP: "/pack/Cisco's Legacy Dragonfyre-2F Beta.zip"
       CF_SLUG: "nightfallcraft-the-casket-of-reveries"
-      CF_MODPACK_ZIP: "/pack/The Casket of Reveries-2.0.7.zip"
+      CF_MODPACK_ZIP: "/pack/modpack.zip"
       USE_AIKAR_FLAGS: true
       CURSEFORGE_FILES: |
         chunky-pregenerator-forge
-        # dap-ur-homies
       CF_EXCLUDE_MODS: "chat-plus,clear-water,domestication-innovation-whitelist,simple-bedrock-model"
       MEMORY: "6G"
 
