@@ -3,6 +3,7 @@
 name:
 let
   composeSrc = ../servers + "/${name}/compose.yaml";
+  serverIcon = ../servers + "/${name}/server-icon.png";
 in
 {
   type = "app";
@@ -115,13 +116,12 @@ in
         fi
 
         # copy server-icon if present
-        ICON_SRC="$PWD/servers/${name}/server-icon.png"
         ICON_DEST="$DEST/data/server-icon.png"
-        if [ -f "$ICON_SRC" ]; then
+        if [ -f ${serverIcon} ]; then
           echo "[icon] Copying server-icon.png..."
           mkdir -p "$DEST/data"
           rm -f "$ICON_DEST"
-          cp "$ICON_SRC" "$ICON_DEST"
+          cp ${serverIcon} "$ICON_DEST"
         elif [ -f "$ICON_DEST" ]; then
           echo "[icon] No server-icon in repo, removing old one..."
           rm -f "$ICON_DEST"
