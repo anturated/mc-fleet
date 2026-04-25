@@ -1,6 +1,6 @@
 services:
   mc:
-    image: itzg/minecraft-server:java17
+    image: itzg/minecraft-server:java21
     container_name: minecraft-aero
     stdin_open: true
     tty: true

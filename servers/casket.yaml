@@ -14,7 +14,6 @@ services:
 
       TYPE: "AUTO_CURSEFORGE"
 
-      # CF_MODPACK_ZIP: "/pack/Cisco's Legacy Dragonfyre-2F Beta.zip"
       CF_SLUG: "nightfallcraft-the-casket-of-reveries"
       CF_MODPACK_ZIP: "/pack/modpack.zip"
       USE_AIKAR_FLAGS: true
