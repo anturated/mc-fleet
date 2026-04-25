@@ -24,6 +24,7 @@ services:
         rapid-leaf-decay
 
       CF_EXCLUDE_MODS: ""
+      REMOVE_OLD_MODS: "TRUE"
       MEMORY: "6G"
 
       ALLOW_FLIGHT: "true"
