@@ -20,7 +20,6 @@ services:
       CURSEFORGE_FILES: |
         chunky-pregenerator-forge
         worldedit
-        distant-horizons
         onekeyminer-nf
         rapid-leaf-decay
 
