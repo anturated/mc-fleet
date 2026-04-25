@@ -4,6 +4,7 @@ name:
 let
   composeSrc = ../servers + "/${name}/compose.yaml";
   serverIcon = ../servers + "/${name}/server-icon.png";
+  hasIcon = builtins.pathExists serverIcon;
 in
 {
   type = "app";
@@ -116,16 +117,22 @@ in
         fi
 
         # copy server-icon if present
-        ICON_DEST="$DEST/data/server-icon.png"
-        if [ -f ${serverIcon} ]; then
-          echo "[icon] Copying server-icon.png..."
-          mkdir -p "$DEST/data"
-          rm -f "$ICON_DEST"
-          cp ${serverIcon} "$ICON_DEST"
-        elif [ -f "$ICON_DEST" ]; then
-          echo "[icon] No server-icon in repo, removing old one..."
-          rm -f "$ICON_DEST"
-        fi
+        ${
+          if hasIcon then
+            ''
+              echo "[icon] Copying server-icon.png..."
+              mkdir -p "$DEST/data"
+              rm -f "$DEST/data/server-icon.png"
+              cp ${serverIcon} "$DEST/data/server-icon.png"
+            ''
+          else
+            ''
+              if [ -f "$DEST/data/server-icon.png" ]; then
+                echo "[icon] No server-icon in repo, removing old one..."
+                rm -f "$DEST/data/server-icon.png"
+              fi
+            ''
+        }
 
         # bring it up
         cd "$DEST"
