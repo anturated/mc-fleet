@@ -21,9 +21,14 @@ services:
         chunky-pregenerator-forge
         worldedit
         distant-horizons
+        onekeyminer-nf
+        rapid-leaf-decay
 
       CF_EXCLUDE_MODS: ""
       MEMORY: "6G"
+
+      ALLOW_FLIGHT: "true"
+      MOTD: "She air my nautics til i craft"
 
     volumes:
       - ./data:/data
