@@ -25,21 +25,20 @@ in
           exit 1
         fi
 
-        echo "━━━ Stopping running minecraft/mc containers ━━━"
+        echo "• ──────────────────── Docker ──────────────────── •"
         CONTAINERS=$(docker ps --format '{{.Names}}' \
           | grep -E '^(minecraft-|mc-)' || true)
 
         if [ -n "$CONTAINERS" ]; then
-          echo "[docker] Stopping: $CONTAINERS"
+          echo "> Stopping $CONTAINERS"
           echo "$CONTAINERS" | xargs docker stop --timeout 60
-          echo "[docker] All stopped."
+          echo "> All stopped."
         else
-          echo "[docker] Nothing running, continuing."
+          echo "> No minecraft containers running."
         fi
 
         DEST="$HOME/mc-servers/${name}"
-        echo ""
-        echo "━━━ Deploying ${name} → $DEST ━━━"
+        echo "> Deploying ${name}"
         mkdir -p "$DEST"
         rm -f "$DEST/compose.yaml" # need to delete cuz its readonly
         cp ${composeSrc} "$DEST/compose.yaml"
@@ -47,30 +46,29 @@ in
 
         ${lib.optionalString needsZip ''
           if [ -f "$DEST/pack/modpack.zip" ]; then
-            echo "[zip] modpack.zip already present, skipping download."
+            echo "> modpack.zip already present, skipping download."
           else
             rm -rf "$DEST/pack"
             mkdir -p "$DEST/pack"
             URL="https://www.curseforge.com/minecraft/modpacks/${cfSlug}"
 
-            echo ""
-            echo "┌─────────────────────────────────────────────────────┐"
-            echo "│  This server needs a modpack zip.                   │"
-            echo "│                                                     │"
-            echo "│  Opening modpack URL...                             │"
-            echo "│                                                     │"
-            echo "│  Manually download the modpack zip                  │"
-            echo "│  Watching ~/Downloads...                            │"
-            echo "└─────────────────────────────────────────────────────┘"
-
-            if command -v xdg-open >/dev/null; then
-              xdg-open "$URL" >/dev/null 2>&1
-            elif command -v open >/dev/null; then # fallback for macOS
-              open "$URL" >/dev/null 2>&1
-            else
-              echo "Could not detect web browser. Please open the link manually."
-              echo "$URL"
+            OPENED=false
+            if   command -v xdg-open >/dev/null; then xdg-open "$URL" >/dev/null 2>&1 && OPENED=true
+            elif command -v open     >/dev/null; then open     "$URL" >/dev/null 2>&1 && OPENED=true
             fi
+
+            Y='\033[1;33m'
+            R='\033[0m'
+            echo -e "• ''${Y}────────────────────────────────────────────────''${R} •"
+            echo -e "''${Y}  This server requires a modpack zip.''${R}"
+            if ''$OPENED; then
+              echo -e "''${Y}  Opening CurseForge page in your browser...''${R}"
+            else
+              echo -e "''${Y}  No browser found. Open this link manually:''${R}"
+              echo -e "''${Y}  ''$URL''${R}"
+            fi
+            echo -e "''${Y}  Watching ~/Downloads for a new .zip file...''${R}"
+            echo -e "• ''${Y}────────────────────────────────────────────────''${R} •"
 
             mkdir -p "$HOME/Downloads"
             shopt -s nullglob
@@ -88,8 +86,7 @@ in
                 if $is_new; then
                   sleep 1
                   mv "$zip" "$DEST/pack/modpack.zip"
-                  echo "[zip] Found new download: $(basename "$zip")"
-                  echo "[zip] Successfully moved to: $DEST/pack/modpack.zip"
+                  echo "> Moved $(basename "$zip") -> $DEST/pack/modpack.zip"
 
                   break 2
                 fi
@@ -103,7 +100,8 @@ in
         ${
           if hasIcon then
             ''
-              echo "[icon] Copying server-icon.png..."
+              echo "• ───────────────────── Icon ───────────────────── •"
+              echo "> Copying server-icon.png..."
               mkdir -p "$DEST/data"
               rm -f "$DEST/data/server-icon.png"
               cp ${serverIcon} "$DEST/data/server-icon.png"
@@ -111,7 +109,7 @@ in
           else
             ''
               if [ -f "$DEST/data/server-icon.png" ]; then
-                echo "[icon] No server-icon in repo, removing old one..."
+                echo "> No server-icon in repo, removing the old one..."
                 rm -f "$DEST/data/server-icon.png"
               fi
             ''
@@ -120,8 +118,13 @@ in
         cd "$DEST"
         docker compose up -d --build
 
-        echo ""
-        echo "✓ ${name} is up. Logs: docker compose -f $DEST/compose.yaml logs -f" # TODO: add attach command
+        echo "• ───────────────────── Done ───────────────────── •"
+        echo "> ${name} is up ✓"
+        echo ">>>  Logs  <<<"
+        echo "docker compose -f $DEST/compose.yaml logs -f"
+        echo ">>> Attach <<<"
+        echo "docker attach minecraft-${name}"
+        echo "• ──────────────────────────────────────────────── •"
       '';
     }
     + "/bin/deploy-${name}"
