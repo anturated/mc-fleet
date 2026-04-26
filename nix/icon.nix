@@ -23,7 +23,7 @@
 
         echo "━━━ Converting $IMG → $DEST (64x64) ━━━"
 
-        convert "$IMG" \
+        magick convert "$IMG" \
           -resize 64x64^ \
           -gravity Center \
           -extent 64x64 \
