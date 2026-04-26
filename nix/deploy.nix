@@ -35,7 +35,7 @@ in
 
         if [ -n "$CONTAINERS" ]; then
           echo "[docker] Stopping: $CONTAINERS"
-          echo "$CONTAINERS" | xargs docker stop --time 60
+          echo "$CONTAINERS" | xargs docker stop --timeout 60
           echo "[docker] All stopped."
         else
           echo "[docker] Nothing running, continuing."
