@@ -1,24 +1,21 @@
 { pkgs }:
-
-name:
+name: composeSrc: cfg:
 let
-  composeSrc = ../servers + "/${name}/compose.yaml";
+  lib = pkgs.lib;
   serverIcon = ../servers + "/${name}/server-icon.png";
   hasIcon = builtins.pathExists serverIcon;
+  needsZip = cfg.zip or false;
+  cfSlug = cfg.slug or "";
 in
 {
   type = "app";
   program = toString (
     pkgs.writeShellApplication {
       name = "deploy-${name}";
-      runtimeInputs = [
-        pkgs.coreutils
-        pkgs.gnugrep
-      ];
+      runtimeInputs = [ pkgs.coreutils ];
       text = ''
         set -euo pipefail
 
-        # key check (do this first, fail fast)
         KEY_FILE="$HOME/mc-servers/key.txt"
         if [ ! -f "$KEY_FILE" ]; then
           echo "✗ $KEY_FILE not found."
@@ -28,7 +25,6 @@ in
           exit 1
         fi
 
-        # stop running minecraft containers
         echo "━━━ Stopping running minecraft/mc containers ━━━"
         CONTAINERS=$(docker ps --format '{{.Names}}' \
           | grep -E '^(minecraft-|mc-)' || true)
@@ -41,7 +37,6 @@ in
           echo "[docker] Nothing running, continuing."
         fi
 
-        # set up server dir
         DEST="$HOME/mc-servers/${name}"
         echo ""
         echo "━━━ Deploying ${name} → $DEST ━━━"
@@ -50,18 +45,13 @@ in
         cp ${composeSrc} "$DEST/compose.yaml"
         cp "$KEY_FILE" "$DEST/.env"
 
-        # check if compose uses CF_MODPACK_ZIP
-        # grep -E should skip commented lines (leading #, ignoring whitespace)
-        if grep -qE '^[[:space:]]*CF_MODPACK_ZIP:' "$DEST/compose.yaml"; then
+        ${lib.optionalString needsZip ''
           if [ -f "$DEST/pack/modpack.zip" ]; then
-            echo "[zip] modpack.zip detected."
+            echo "[zip] modpack.zip already present, skipping download."
           else
+            rm -rf "$DEST/pack"
             mkdir -p "$DEST/pack"
-            SLUG=$(grep -E '^[[:space:]]*CF_SLUG:' "$DEST/compose.yaml" \
-              | head -1 \
-              | sed 's/.*CF_SLUG:[[:space:]]*//' \
-              | tr -d '"'"'"' ')
-            URL="https://www.curseforge.com/minecraft/modpacks/$SLUG"
+            URL="https://www.curseforge.com/minecraft/modpacks/${cfSlug}"
 
             echo ""
             echo "┌─────────────────────────────────────────────────────┐"
@@ -82,14 +72,11 @@ in
               echo "$URL"
             fi
 
-
             mkdir -p "$HOME/Downloads"
             shopt -s nullglob
             EXISTING_ZIPS=("$HOME/Downloads"/*.zip)
-
             while true; do
               CURRENT_ZIPS=("$HOME/Downloads"/*.zip)
-
               for zip in "''${CURRENT_ZIPS[@]}"; do
                 is_new=true
                 for e_zip in "''${EXISTING_ZIPS[@]}"; do
@@ -98,7 +85,6 @@ in
                     break
                   fi
                 done
-
                 if $is_new; then
                   sleep 1
                   mv "$zip" "$DEST/pack/modpack.zip"
@@ -108,15 +94,12 @@ in
                   break 2
                 fi
               done
-
               sleep 2
             done
-
             shopt -u nullglob
           fi
-        fi
+        ''}
 
-        # copy server-icon if present
         ${
           if hasIcon then
             ''
@@ -134,7 +117,6 @@ in
             ''
         }
 
-        # bring it up
         cd "$DEST"
         docker compose up -d --build
 

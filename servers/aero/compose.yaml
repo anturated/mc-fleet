@@ -34,4 +34,4 @@ services:
       - ./data:/data
       - ./pack:/pack
 
-    restart: unless-stopped
+    restart: on-failure:2

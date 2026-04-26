@@ -17,14 +17,23 @@
       let
         pkgs = nixpkgs.legacyPackages.${system};
 
-        # Auto-discover servers/*.yaml at eval time
         serverDir = builtins.readDir ./servers;
         serverNames = builtins.filter (name: serverDir.${name} == "directory") (
           builtins.attrNames serverDir
         );
 
+        makeCompose = import ./nix/compose.nix { inherit pkgs; };
         makeDeployApp = import ./nix/deploy.nix { inherit pkgs; };
         makeIconApp = import ./nix/icon.nix { inherit pkgs; };
+
+        makeServerApp =
+          name:
+          let
+            configPath = ./servers + "/${name}/config.nix";
+            cfg = if builtins.pathExists configPath then import configPath else { };
+            composeSrc = makeCompose name cfg;
+          in
+          makeDeployApp name composeSrc cfg;
 
       in
       {
@@ -42,7 +51,7 @@
           builtins.listToAttrs (
             map (name: {
               inherit name;
-              value = makeDeployApp name;
+              value = makeServerApp name;
             }) serverNames
           )
           // {
