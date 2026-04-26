@@ -16,12 +16,23 @@ in
       text = ''
         set -euo pipefail
 
+        R="$(tput setaf 1)"
+        G="$(tput setaf 2)"
+        Y="$(tput setaf 3)"
+        B="$(tput setaf 4)"
+        N="$(tput sgr0)"
+
+        echo ""
         KEY_FILE="$HOME/mc-servers/key.txt"
         if [ ! -f "$KEY_FILE" ]; then
-          echo "✗ $KEY_FILE not found."
-          echo "  Create it with a single line: CF_API_KEY=your_curseforge_key"
-          echo "  Replace every '$' with '$$'"
-          mkdir "$HOME/mc-servers"
+          echo "• ''${R}──────────────────── ERROR! ────────────────────''${N} •"
+          echo "  $KEY_FILE not found."
+          echo "  Create it with a single line:"
+          echo "  CF_API_KEY='\$your\$curseforge\$keyyyyyyyyyyyyyyyy'"
+          echo "  Your key can be found/created here:"
+          echo "  ''${B}https://console.curseforge.com/#/api-keys''${N}"
+          echo "• ''${R}────────────────────────────────────────────────''${N} •"
+          mkdir -p "$HOME/mc-servers"
           exit 1
         fi
 
@@ -57,18 +68,17 @@ in
             elif command -v open     >/dev/null; then open     "$URL" >/dev/null 2>&1 && OPENED=true
             fi
 
-            Y='\033[1;33m'
-            R='\033[0m'
-            echo -e "• ''${Y}────────────────────────────────────────────────''${R} •"
-            echo -e "''${Y}  This server requires a modpack zip.''${R}"
+            echo -e "• ''${Y}────────────────────────────────────────────────''${N} •"
+            echo -e "''${Y}  This server requires a modpack zip.''${N}"
+            echo -e "''${Y}  Please download it manually.''${N}"
             if ''$OPENED; then
-              echo -e "''${Y}  Opening CurseForge page in your browser...''${R}"
+              echo -e "''${Y}  Opening CurseForge page in your browser...''${N}"
             else
-              echo -e "''${Y}  No browser found. Open this link manually:''${R}"
-              echo -e "''${Y}  ''$URL''${R}"
+              echo -e "''${Y}  No browser found. Open this link manually:''${N}"
+              echo -e "''${Y}  ''$URL''${N}"
             fi
-            echo -e "''${Y}  Watching ~/Downloads for a new .zip file...''${R}"
-            echo -e "• ''${Y}────────────────────────────────────────────────''${R} •"
+            echo -e "''${Y}  Watching ~/Downloads for a new .zip file...''${N}"
+            echo -e "• ''${Y}────────────────────────────────────────────────''${N} •"
 
             mkdir -p "$HOME/Downloads"
             shopt -s nullglob
@@ -120,10 +130,10 @@ in
 
         echo "• ───────────────────── Done ───────────────────── •"
         echo "> ${name} is up ✓"
-        echo ">>>  Logs  <<<"
-        echo "docker compose -f $DEST/compose.yaml logs -f"
-        echo ">>> Attach <<<"
-        echo "docker attach minecraft-${name}"
+        echo "> Logs:"
+        echo "    ''${G}docker compose -f $DEST/compose.yaml logs -f''${N}"
+        echo "> Attach:"
+        echo "    ''${G}docker attach minecraft-${name}''${N}"
         echo "• ──────────────────────────────────────────────── •"
       '';
     }
