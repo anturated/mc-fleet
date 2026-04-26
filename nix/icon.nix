@@ -21,12 +21,12 @@
           exit 1
         fi
 
-        echo "━━━ Converting $IMG → $DEST (128x128) ━━━"
+        echo "━━━ Converting $IMG → $DEST (64x64) ━━━"
 
         convert "$IMG" \
-          -resize 128x128^ \
+          -resize 64x64^ \
           -gravity Center \
-          -extent 128x128 \
+          -extent 64x64 \
           "$DEST"
 
         echo "✓ Saved to $DEST"
