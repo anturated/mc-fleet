@@ -2,9 +2,8 @@
   name = "aero";
   type = "cf";
   slug = "all-of-create-aeronautics";
-  zip = true;
 
-  cfMods = ''
+  addMods = ''
     chunky-pregenerator-forge
     worldedit
     onekeyminer-nf

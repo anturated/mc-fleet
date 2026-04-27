@@ -2,12 +2,11 @@
   name = "casket";
   type = "cf";
   slug = "nightfallcraft-the-casket-of-reveries";
-  zip = true;
 
-  cfMods = ''
+  addMods = ''
     chunky-pregenerator-forge
   '';
-  cfExclude = ''
+  removeMods = ''
     chat-plus
     clear-water
     domestication-innovation-whitelist

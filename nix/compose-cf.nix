@@ -1,0 +1,25 @@
+{
+  lib,
+  cfg,
+  name,
+  ...
+}:
+
+let
+  # sanity checks
+  # TODO: manifest support
+  localModpack = ../servers + "/${name}/modpack.zip";
+  hasLocal = builtins.pathExists localModpack;
+  hasSlug = cfg.slug != "";
+
+  _ = if !hasSlug && !hasLocal then throw "No modpack file or slug provided" else null;
+
+  env = {
+    TYPE = "AUTO_CURSEFORGE";
+  }
+  // lib.optionalAttrs hasSlug { CF_SLUG = cfg.slug; }
+  // lib.optionalAttrs hasLocal { CF_MODPACK_ZIP = "/pack/modpack.zip"; }
+  // lib.optionalAttrs (cfg.addMods != "") { CURSEFORGE_FILES = cfg.addMods; }
+  // lib.optionalAttrs (cfg.removeMods != "") { CF_EXCLUDE_MODS = cfg.removeMods; };
+in
+env

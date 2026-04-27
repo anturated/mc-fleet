@@ -1,17 +1,29 @@
 {
-  name = "";
+  # Modpack platform
+  # vanilla | cf | mr | ftb | gtnh
+  type = "vanilla";
 
-  type = "vanilla"; # vanilla | cf | mr | ftb | gtnh
-  slug = ""; # required for cf/mr, optional for others
-  zip = false; # mount ./pack/modpack.zip
+  # If the server folder contains a modpack.zip or modpack.mrpack ignore this
+  #
+  # Downloads modpack with given slug
+  # FTB uses ID, paste this from link: <id>-modpack-name-<version>
+  # or just the <id> part
+  slug = "";
 
-  cfMods = ""; # newline-separated extra mod slugs
-  cfExclude = ""; # newline-separated slugs, becomes comma list
+  # Newline separated list of extra mods (by slug)
+  addMods = "";
 
-  mrProjects = ""; # newline-separated, same idea as cfMods
+  # Newline separated list of mods to ignore/remove (by slug)
+  removeMods = "";
 
+  # For the rare case where a mod is blocking download
+  # and the API check doesn't suffice
+  requiresZip = false;
+
+  # These go into docker environment
   extraEnv = { };
 
+  # Quick access to some stuff
   docker = {
     java = 21; # itzg/minecraft-server:java<N>
     memory = "6G";
@@ -20,10 +32,11 @@
     clearMods = true; # REMOVE_OLD_MODS
     restart = "unless-stopped";
     port = 25565;
+    version = "LATEST"; # minecraft version
   };
 
+  # Quick access to server.properties
   server = {
-    version = "LATEST";
     motd = "mc-fleet server";
     difficulty = "normal";
     players = 20;
@@ -34,7 +47,7 @@
     commandBlocks = false;
     onlineMode = true;
     spawnProtection = 16;
-    maxTickTime = -1;
+    maxTickTime = -1; # doesn't crash the server if it freezes for too long
     seed = "";
     whitelist = [ ];
     ops = [ ];

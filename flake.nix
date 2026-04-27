@@ -16,25 +16,27 @@
       system:
       let
         pkgs = nixpkgs.legacyPackages.${system};
+        lib = pkgs.lib;
 
         serverDir = builtins.readDir ./servers;
         serverNames = builtins.filter (name: serverDir.${name} == "directory") (
           builtins.attrNames serverDir
         );
 
-        makeCompose = import ./nix/compose.nix { inherit pkgs; };
+        mergeConfig = import ./nix/merge-config.nix { inherit lib; };
+        makeCompose = import ./nix/compose.nix { inherit pkgs lib; };
         makeDeployApp = import ./nix/deploy.nix { inherit pkgs; };
         makeIconApp = import ./nix/icon.nix { inherit pkgs; };
 
         makeServerApp =
-          name:
+          { name }:
           let
             configPath = ./servers + "/${name}/config.nix";
-            cfg = if builtins.pathExists configPath then import configPath else { };
-            composeSrc = makeCompose name cfg;
+            userCfg = if builtins.pathExists configPath then import configPath else { };
+            cfg = mergeConfig { inherit userCfg; };
+            composeSrc = makeCompose { inherit name cfg; };
           in
-          makeDeployApp name composeSrc cfg;
-
+          makeDeployApp { inherit name composeSrc cfg; };
       in
       {
         devShells.default = pkgs.mkShell {
@@ -51,7 +53,7 @@
           builtins.listToAttrs (
             map (name: {
               inherit name;
-              value = makeServerApp name;
+              value = makeServerApp { inherit name; };
             }) serverNames
           )
           // {
