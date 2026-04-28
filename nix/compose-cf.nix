@@ -13,6 +13,7 @@ let
   hasSlug = cfg.slug != "";
 
   _ = if !hasSlug && !hasLocal then throw "No modpack file or slug provided" else null;
+  __ = if hasSlug && hasLocal then throw "Both modpack and slug found. Choose one" else null;
 
   env = {
     TYPE = "AUTO_CURSEFORGE";
