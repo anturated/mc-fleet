@@ -59,8 +59,10 @@
         break ;;
 
       *"This crash report has been saved to"*)
-        fail "Crashed with report."
-        say  "Likely won't stop on it's own"
+        fail "Crashed with report." ;;
+
+      *"Exception stopping the server"*)
+        say  "Won't stop on it's own, helping."
         stop_container ;;
 
       *"not allowed for project distribution"*)
