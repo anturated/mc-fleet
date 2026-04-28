@@ -101,15 +101,15 @@ in
       elif command -v open     >/dev/null; then open     "$URL" >/dev/null 2>&1 && OPENED=true
       fi
 
-      warn "This server requires a modpack zip."
+      warn "This modpack doesn't allow third-party downloads."
       say  "Please download it manually."
       if ''$OPENED; then
         say "Opening CurseForge page in your browser..."
       else
-        say  "No browser found. Open this link manually:"
-        info "$URL"
+        warn "No browser found. Open this link manually:"
+        say  "$URL"
       fi
-      say "Watching ~/Downloads for a new .zip file..."
+      info "Watching ~/Downloads for a new .zip file..."
 
       mkdir -p "$HOME/Downloads"
       shopt -s nullglob

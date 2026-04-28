@@ -5,6 +5,8 @@
 
   _fail_install=0
   _fail_api=0
+  _fail_crash=0
+  _fail_start=0
   _shown_downloading_modpack=0
   _shown_processing_modpack=0
   _shown_downloading_mods=0
@@ -60,17 +62,18 @@
 
       *"This crash report has been saved to"*)
         fail "Crashed with report." ;;
-
       *"Exception stopping the server"*)
         say  "Won't stop on it's own, helping."
         stop_container ;;
+      *"Failed to start the minecraft server"*)
+        _fail_start=1 ;;
 
       *"not allowed for project distribution"*)
         _fail_api=1 ;;
       *"mc-image-helper"*"ERROR"*"install-curseforge"*"command failed"*)
         _fail_install=1 ;;
 
-      *"Downloading modpack zip for"*)
+      *"Downloading modpack zip for"*|*"Downloading https://downloads.gtnewhorizons.com/"*)
         once downloading_modpack say "Downloading modpack..." ;;
       *"Processing modpack '"*)
         once processing_modpack say "Processing modpack..." ;;
@@ -119,7 +122,6 @@
           break 2
         fi ;;
     esac
-
   done || true # safety net
 
   if [ "$_server_ready" -eq 0 ]; then
@@ -136,6 +138,10 @@
       stop_container
     elif [ "$_fail_crash" -eq 1 ]; then
       fail "Crashed for some reason."
+      stop_container
+    elif [ "$_fail_start" -eq 1 ]; then
+      fail "Server failed to start.";
+      say  "Bringing down for good measure."
       stop_container
     else
       fail "Can't see anything, bailing out."
