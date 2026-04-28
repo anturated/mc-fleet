@@ -36,7 +36,13 @@ let
       stdin_open = true;
       tty = true;
       ports = [ "${toString d.port}:25565" ];
-      env_file = [ ".env" ];
+      env_file = [
+        ".env"
+        { # runtime cf zip thing
+          path = ".env.runtime";
+          required = false;
+        }
+      ];
       environment = baseEnv // hostingEnv // cfg.extraEnv;
       inherit volumes;
       restart = d.restart;

@@ -12,6 +12,8 @@ let
   preFlight = if isCF then import ./preflight-cf.nix { inherit cfg; } else "";
   dockerSnippet = import ./docker-setup.nix { inherit name composeSrc; };
   iconSnippet = if hasIcon then import ./copy-icon.nix { inherit name; } else "";
+  pilotSnippet = import ./pilot.nix { inherit name; };
+  finishSnippet = import ./finish.nix { inherit name; };
 in
 {
   type = "app";
@@ -30,11 +32,14 @@ in
 
         DEST="$HOME/mc-servers/${name}"
         mkdir -p "$DEST"
+        rm -f "$DEST/.env.runtime"
 
         echo ""
         ${preFlight}
         ${iconSnippet}
         ${dockerSnippet}
+        ${pilotSnippet}
+        ${finishSnippet}
       '';
     }
     + "/bin/deploy-${name}"

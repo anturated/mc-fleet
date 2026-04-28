@@ -35,6 +35,7 @@ in
 
   if [ -f "$DEST/pack/modpack.zip" ]; then
     echo "> modpack.zip exists. Good."
+    echo "CF_MODPACK_ZIP=\"/pack/modpack.zip\"" >> "$DEST/.env.runtime"
   else
     ${
       # override the api checks if we know it's gonna be a zip
@@ -46,6 +47,10 @@ in
 
           if [ -f "$DEST/.api-checked" ]; then
             echo "> API got a green light earlier. Good."
+            if [ -f "$DEST/.force-zip" ]; then
+              echo "> Pilot said you need a zip."
+              NEEDS_ZIP=true
+            fi
           else
             echo "> Verifying key..."
 
@@ -85,6 +90,9 @@ in
     }
 
     if [ "$NEEDS_ZIP" == "true" ]; then
+      echo "> Addng modpack zip to .env..."
+      # looks hacky but eh, there's no way i'll know that at eval time
+      echo "CF_MODPACK_ZIP=\"/pack/modpack.zip\"" >> "$DEST/.env.runtime"
       rm -rf "$DEST/pack"
       mkdir -p "$DEST/pack"
       URL="https://www.curseforge.com/minecraft/modpacks/${slug}"
@@ -94,8 +102,7 @@ in
       elif command -v open     >/dev/null; then open     "$URL" >/dev/null 2>&1 && OPENED=true
       fi
 
-      echo -e "• ''${Y}────────────────────────────────────────────────''${N} •"
-      echo -e "''${Y}  This server requires a modpack zip.''${N}"
+      echo -e "''${Y}> This server requires a modpack zip.''${N}"
       echo -e "''${Y}  Please download it manually.''${N}"
       if ''$OPENED; then
         echo -e "''${Y}  Opening CurseForge page in your browser...''${N}"
@@ -104,7 +111,6 @@ in
         echo -e "''${Y}  ''$URL''${N}"
       fi
       echo -e "''${Y}  Watching ~/Downloads for a new .zip file...''${N}"
-      echo -e "• ''${Y}────────────────────────────────────────────────''${N} •"
 
       mkdir -p "$HOME/Downloads"
       shopt -s nullglob
@@ -122,7 +128,8 @@ in
           if $is_new; then
             sleep 1
             mv "$zip" "$DEST/pack/modpack.zip"
-            echo "> Moved $(basename "$zip") -> $DEST/pack/modpack.zip"
+            echo "> Moved $(basename "$zip")"
+            echo " to $DEST/pack/modpack.zip"
             break 2
           fi
         done
