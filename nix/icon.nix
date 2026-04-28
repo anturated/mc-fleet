@@ -12,16 +12,17 @@
         DEST="$PWD/servers/$NAME/server-icon.png"
 
         if [ ! -f "$IMG" ]; then
-          echo "✗ Image not found: $IMG"
+          fail "Image not found: $IMG"
           exit 1
         fi
 
         if [ ! -d "$PWD/servers/$NAME" ]; then
-          echo "✗ No such server: servers/$NAME"
+          fail "No such server: servers/$NAME"
           exit 1
         fi
 
-        echo "━━━ Converting $IMG → $DEST (64x64) ━━━"
+        say "Converting $IMG"
+        say "to -> $DEST (64x64)"
 
         magick convert "$IMG" \
           -resize 64x64^ \
@@ -29,7 +30,7 @@
           -extent 64x64 \
           "$DEST"
 
-        echo "✓ Saved to $DEST"
+        ok "Saved to $DEST"
       '';
     } + "/bin/icon"
   );

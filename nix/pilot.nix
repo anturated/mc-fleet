@@ -3,11 +3,6 @@
 ''
   CONTAINER_NAME="minecraft-${name}"
 
-  say() { printf "%s %s %s\n" "$N" "$N" "$1"; }
-  ok()  { printf "%s>%s %s\n" "$N" "$G" "$1"; }
-  warn(){ printf "%s>%s %s\n" "$N" "$Y" "$1"; }
-  fail(){ printf "%s>%s %s\n" "$N" "$R" "$1"; }
-
   _fail_install=0
   _fail_api=0
   _shown_downloading_modpack=0
@@ -43,7 +38,7 @@
 
 
   echo "• ──────────────────── >Pilot ──────────────────── •"
-  echo "> Babysitting this launch."
+  say "Babysitting this launch."
   say "Boarding ${name}..."
 
   shopt -s extglob lastpipe
@@ -114,7 +109,7 @@
           ok "Server is up and running!"
           say "Pilot out. See ya."
           _server_ready=1
-          break
+          break 2
         fi ;;
     esac
 

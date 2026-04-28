@@ -8,14 +8,14 @@
     | grep -E '^(minecraft-|mc-)' || true)
 
   if [ -n "$CONTAINERS" ]; then
-    echo "> Stopping $CONTAINERS"
+    say  "Stopping $CONTAINERS"
     echo "$CONTAINERS" | xargs docker stop --timeout 60
-    echo "> All stopped."
+    ok   "All stopped."
   else
-    echo "> No minecraft containers running."
+    say "No minecraft containers running."
   fi
 
-  echo "> Deploying ${name}"
+  info "Deploying ${name}"
   rm -f "$DEST/compose.yaml" # need to delete cuz its readonly
   cp ${composeSrc} "$DEST/compose.yaml"
 

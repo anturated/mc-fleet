@@ -10,10 +10,10 @@ in
 
   KEY_FILE="$HOME/mc-servers/key.txt"
   if [ ! -f "$KEY_FILE" ]; then
-    echo "> ''${R}Error:''${N} $KEY_FILE not found."
-    echo "  Paste your CurseForge API key there."
-    echo "  You can get your key here:"
-    echo "  ''${B}https://console.curseforge.com/#/api-keys''${N}"
+    fail "$KEY_FILE not found."
+    say  "Paste your CurseForge API key there."
+    say  "You can get your key here:"
+    info "https://console.curseforge.com/#/api-keys"
     echo "• ──────────────────────────────────────────────── •"
     exit 1
   fi
@@ -22,7 +22,7 @@ in
 
   CF_KEY=$(tr -d ' \t\r\n' < "$KEY_FILE")
   if [ -z "$CF_KEY" ]; then
-      echo "> ''${R}Error:''${N} $KEY_FILE is empty."
+      fail "$KEY_FILE is empty."
       echo "• ──────────────────────────────────────────────── •"
     exit 1
   fi
@@ -34,7 +34,7 @@ in
   # check CF API for manual download #
 
   if [ -f "$DEST/pack/modpack.zip" ]; then
-    echo "> modpack.zip exists. Good."
+    say "modpack.zip exists. Good."
     echo "CF_MODPACK_ZIP=\"/pack/modpack.zip\"" >> "$DEST/.env.runtime"
   else
     ${
@@ -46,33 +46,32 @@ in
           NEEDS_ZIP=false
 
           if [ -f "$DEST/.api-checked" ]; then
-            echo "> API got a green light earlier. Good."
+            say "API got greenlit earlier. Good."
             if [ -f "$DEST/.force-zip" ]; then
-              echo "> Pilot said you need a zip."
+              say "Pilot said you need a zip."
               NEEDS_ZIP=true
             fi
           else
-            echo "> Verifying key..."
+            say "Verifying key..."
 
             SEARCH_RES=$(curl -s -w "\n%{http_code}" -H "x-api-key: $CF_KEY" -H "Accept: application/json" "https://api.curseforge.com/v1/mods/search?gameId=432&classId=4471&slug=${slug}")
             HTTP_STATUS=$(echo "$SEARCH_RES" | tail -n1)
             BODY=$(echo "$SEARCH_RES" | head -n-1)
 
             if [ "$HTTP_STATUS" != "200" ]; then
-              echo "> ''${R}Error: CurseForge API denied the request''${N}"
-              echo "> ''${R} Status: $HTTP_STATUS''${N}"
-              echo "> ''${R}Check your API key.''${N}"
+              fail "CurseForge API denied the request ($HTTP_STATUS)"
+              say  "Check your API key."
               echo "• ──────────────────────────────────────────────── •"
               exit 1
             fi
 
-            echo "> Checking API..."
+            say "Checking API..."
 
             MOD_ID=$(echo "$BODY" | jq -r '.data[0].id')
 
             if [ "$MOD_ID" == "null" ] || [ -z "$MOD_ID" ]; then
-              echo "> ''${R}Error: Could not find ${slug}''${N}"
-              echo "> ''${R}Check your slug.''${N}"
+              fail "Could not find ${slug}"
+              say  "Check your slug."
               echo "• ──────────────────────────────────────────────── •"
               exit 1
             fi
@@ -82,7 +81,7 @@ in
             if [ "$ALLOWS_DIST" == "false" ]; then
               NEEDS_ZIP=true
             else
-              echo "> API looks clear."
+              ok "API looks clear."
               touch "$DEST/.api-checked"
             fi
           fi
@@ -90,7 +89,7 @@ in
     }
 
     if [ "$NEEDS_ZIP" == "true" ]; then
-      echo "> Addng modpack zip to .env..."
+      say "Addng modpack zip to .env..."
       # looks hacky but eh, there's no way i'll know that at eval time
       echo "CF_MODPACK_ZIP=\"/pack/modpack.zip\"" >> "$DEST/.env.runtime"
       rm -rf "$DEST/pack"
@@ -102,15 +101,15 @@ in
       elif command -v open     >/dev/null; then open     "$URL" >/dev/null 2>&1 && OPENED=true
       fi
 
-      echo -e "''${Y}> This server requires a modpack zip.''${N}"
-      echo -e "''${Y}  Please download it manually.''${N}"
+      warn "This server requires a modpack zip."
+      say  "Please download it manually."
       if ''$OPENED; then
-        echo -e "''${Y}  Opening CurseForge page in your browser...''${N}"
+        say "Opening CurseForge page in your browser..."
       else
-        echo -e "''${Y}  No browser found. Open this link manually:''${N}"
-        echo -e "''${Y}  ''$URL''${N}"
+        say  "No browser found. Open this link manually:"
+        info "$URL"
       fi
-      echo -e "''${Y}  Watching ~/Downloads for a new .zip file...''${N}"
+      say "Watching ~/Downloads for a new .zip file..."
 
       mkdir -p "$HOME/Downloads"
       shopt -s nullglob
@@ -128,8 +127,8 @@ in
           if $is_new; then
             sleep 1
             mv "$zip" "$DEST/pack/modpack.zip"
-            echo "> Moved $(basename "$zip")"
-            echo " to $DEST/pack/modpack.zip"
+            ok  "Moved $(basename "$zip")"
+            say "to $DEST/pack/modpack.zip"
             break 2
           fi
         done

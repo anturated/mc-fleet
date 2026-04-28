@@ -30,6 +30,12 @@ in
         B="$(tput setaf 4)"
         N="$(tput sgr0)"
 
+        say() { printf "%s %s %s''${N}\n" "$N" "$N" "$1"; }
+        info(){ printf "%s %s %s''${N}\n" "$N" "$B" "$1"; }
+        ok()  { printf "%s>%s %s''${N}\n" "$N" "$G" "$1"; }
+        warn(){ printf "%s>%s %s''${N}\n" "$N" "$Y" "$1"; }
+        fail(){ printf "%s>%s %s''${N}\n" "$N" "$R" "$1"; }
+
         DEST="$HOME/mc-servers/${name}"
         mkdir -p "$DEST"
         rm -f "$DEST/.env.runtime"

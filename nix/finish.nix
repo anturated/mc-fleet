@@ -2,31 +2,30 @@
 
 ''
   echo "• ───────────────────── Done ───────────────────── •"
-  echo "> ${name} is up ✓"
-  echo "> Logs:"
-  echo "    ''${G}docker compose -f $DEST/compose.yaml logs -f''${N}"
-  echo "> Attach:"
-  echo "    ''${G}docker attach minecraft-${name}''${N}"
+  ok   "${name} is up."
+  say  "Logs:"
+  info "    docker compose -f $DEST/compose.yaml logs -f"
+  say  "Attach:"
+  info "    docker attach minecraft-${name}"
   echo "• ──────────────────────────────────────────────── •"
-
-  echo -ne "> What's next? (l)ogs / (a)ttach / (N)o action"
+  echo -ne "> What's next? (''${R}l''${N})ogs / (''${R}a''${N})ttach / (''${R}N''${N})o action"
 
   read -n 1 -r choice
   echo  # move to next line after keypress
 
   case "$choice" in
     l|L)
-      echo "> Opening logs for ${name}..."
+      ok   "Opening logs for ${name}..."
       echo "• ──────────────────────────────────────────────── •"
       docker compose -f "$DEST/compose.yaml" logs -f
       ;;
     a|A)
-      echo "> Attaching to ${name}..."
+      ok   "Attaching to ${name}..."
       echo "• ──────────────────────────────────────────────── •"
       docker attach "minecraft-${name}"
       ;;
     *)
-      echo "> Goodbye."
+      say  "Goodbye."
       echo "• ──────────────────────────────────────────────── •"
       ;;
   esac
