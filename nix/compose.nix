@@ -37,7 +37,10 @@ let
       tty = true;
       ports = [ "${toString d.port}:25565" ];
       env_file = [
-        ".env"
+        { # runtime cf zip thing
+          path = ".env";
+          required = false;
+        }
         { # runtime cf zip thing
           path = ".env.runtime";
           required = false;
