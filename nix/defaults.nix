@@ -30,7 +30,7 @@
     aikar = true;
     jvmOpts = "";
     clearMods = true; # REMOVE_OLD_MODS
-    restart = "unless-stopped";
+    restart = "on-failure"; # allow /stop to stop the container
     port = 25565;
     version = "LATEST"; # minecraft version
   };
