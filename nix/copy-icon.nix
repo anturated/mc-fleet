@@ -9,7 +9,6 @@ let
       ''
         echo "• ───────────────────── Icon ───────────────────── •"
         say  "Copying server-icon.png..."
-        mkdir -p "$DEST/data"
         rm -f "$DEST/data/server-icon.png"
         cp ${serverIcon} "$DEST/data/server-icon.png"
       ''

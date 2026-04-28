@@ -37,7 +37,11 @@ in
         fail(){ printf "%s>%s %s''${N}\n" "$N" "$R" "$1"; }
 
         DEST="$HOME/mc-servers/${name}"
+        # set these up so the perms are correct
         mkdir -p "$DEST"
+        mkdir -p "$DEST/data"
+        mkdir -p "$DEST/pack"
+        mkdir -p "$DEST/world"
         rm -f "$DEST/.env.runtime"
 
         echo ""
