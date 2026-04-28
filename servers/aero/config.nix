@@ -1,5 +1,4 @@
 {
-  name = "aero";
   type = "cf";
   slug = "all-of-create-aeronautics";
 

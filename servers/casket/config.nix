@@ -1,5 +1,4 @@
 {
-  name = "casket";
   type = "cf";
   slug = "nightfallcraft-the-casket-of-reveries";
 
