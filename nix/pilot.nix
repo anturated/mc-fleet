@@ -58,6 +58,11 @@
         _fail_crash=1
         break ;;
 
+      *"This crash report has been saved to"*)
+        fail "Crashed with report."
+        say  "Likely won't stop on it's own"
+        stop_container ;;
+
       *"not allowed for project distribution"*)
         _fail_api=1 ;;
       *"mc-image-helper"*"ERROR"*"install-curseforge"*"command failed"*)
@@ -67,7 +72,7 @@
         once downloading_modpack say "Downloading modpack..." ;;
       *"Processing modpack '"*)
         once processing_modpack say "Processing modpack..." ;;
-      *"Downloaded mod file mods/"*)
+      *"Downloaded mod file mods/"*|*"Downloaded /data/mods"*)
         once downloading_mods say "Downloading mods..." ;;
       *"Copying any mods from /mods"*)
         once copying_mods say "Copying mods..." ;;
@@ -81,7 +86,7 @@
       *"Setting initial memory"*|*"max to"*)
         once mem say "Memory configured." ;;
 
-      *"Running "*" installer for Minecraft"*)
+      *"Running "*" installer for Minecraft"*|*"Installing Fabric"*)
         once modloader_install say "Installing modloader... this can take a while" ;;
 
       *"Found mod file"*)
