@@ -1,6 +1,7 @@
 {
   type = "cf";
   slug = "nightfallcraft-the-casket-of-reveries";
+  version = "1.20.1";
 
   addMods = ''
     chunky-pregenerator-forge
@@ -12,6 +13,5 @@
     simple-bedrock-model
   '';
 
-  docker.java = 17;
   server.motd = "Genshin Impact™";
 }

@@ -3,12 +3,16 @@
   # vanilla | cf | mr | ftb | gtnh
   type = "vanilla";
 
-  # If the server folder contains a modpack.zip or modpack.mrpack ignore this
-  #
   # Downloads modpack with given slug
+  # If the server folder contains a modpack.zip or modpack.mrpack ignore this
   # FTB uses ID, paste this from link: <id>-modpack-name-<version>
   # or just the <id> part
   slug = "";
+
+  # Minecraft version
+  # Will try to auto-set docker.java based on this
+  # docker.java will be ignored if not empty
+  version = "";
 
   # Newline separated list of extra mods (by slug)
   addMods = "";
@@ -25,7 +29,7 @@
 
   # Quick access to some stuff
   docker = {
-    java = 21; # itzg/minecraft-server:java<N>
+    java = 0; # itzg/minecraft-server:java<N>, 0 == latest
     memory = "6G";
     aikar = true;
     jvmOpts = "";
