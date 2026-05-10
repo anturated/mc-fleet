@@ -7,6 +7,18 @@
       name = "icon";
       runtimeInputs = [ pkgs.imagemagick pkgs.coreutils ];
       text = ''
+        R="$(tput setaf 1)"
+        G="$(tput setaf 2)"
+        Y="$(tput setaf 3)"
+        B="$(tput setaf 4)"
+        N="$(tput sgr0)"
+
+        say() { printf "%s %s %s''${N}\n" "$N" "$N" "$1"; }
+        info(){ printf "%s %s %s''${N}\n" "$N" "$B" "$1"; }
+        ok()  { printf "%s>%s %s''${N}\n" "$N" "$G" "$1"; }
+        warn(){ printf "%s>%s %s''${N}\n" "$N" "$Y" "$1"; }
+        fail(){ printf "%s>%s %s''${N}\n" "$N" "$R" "$1"; }
+
         NAME="''${1:?Usage: icon <packname> </path/to/image>}"
         IMG="''${2:?Usage: icon <packname> </path/to/image>}"
         DEST="$PWD/servers/$NAME/server-icon.png"
