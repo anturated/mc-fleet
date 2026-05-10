@@ -109,13 +109,13 @@ in
         warn "No browser found. Open this link manually:"
         say  "$URL"
       fi
-      info "Watching ~/Downloads for a new .zip file..."
+      info "Watching $XDG_DOWNLOAD_DIR for a new .zip file..."
 
-      mkdir -p "$HOME/Downloads"
+      mkdir -p "$XDG_DOWNLOAD_DIR"
       shopt -s nullglob
-      EXISTING_ZIPS=("$HOME/Downloads"/*.zip)
+      EXISTING_ZIPS=("$XDG_DOWNLOAD_DIR"/*.zip)
       while true; do
-        CURRENT_ZIPS=("$HOME/Downloads"/*.zip)
+        CURRENT_ZIPS=("$XDG_DOWNLOAD_DIR"/*.zip)
         for zip in "''${CURRENT_ZIPS[@]}"; do
           is_new=true
           for e_zip in "''${EXISTING_ZIPS[@]}"; do
