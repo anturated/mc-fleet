@@ -21,6 +21,10 @@ let
   // lib.optionalAttrs hasSlug { CF_SLUG = cfg.slug; }
   // lib.optionalAttrs hasLocal { CF_MODPACK_ZIP = "/pack/modpack.zip"; }
   // lib.optionalAttrs (cfg.addMods != "") { CURSEFORGE_FILES = cfg.addMods; }
-  // lib.optionalAttrs (cfg.removeMods != "") { CF_EXCLUDE_MODS = cfg.removeMods; };
+  // lib.optionalAttrs (cfg.removeMods != "") { # this needs to be space separated
+    CF_EXCLUDE_MODS = builtins.concatStringsSep " " (
+      builtins.filter (s: s != "") (map lib.trim (lib.splitString "\n" cfg.removeMods))
+    );
+  };
 in
 env
